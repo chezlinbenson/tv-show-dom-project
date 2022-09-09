@@ -7,9 +7,16 @@ function setup() {
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
 
+  let pageTitle = document.createElement("h1");
+  pageTitle.innerText = "TV Show Project";
+  rootElem.appendChild(pageTitle);
+
+  let sectionEl = document.createElement("section");
+  rootElem.appendChild(sectionEl);
+
   episodeList.forEach((episode) => {
     let articleEl = document.createElement("article");
-    rootElem.appendChild(articleEl);
+    sectionEl.appendChild(articleEl);
 
     let titleEl = document.createElement("h2");
     let seasonCode = `S${episode.season
