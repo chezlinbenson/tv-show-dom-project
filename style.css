@@ -10,10 +10,14 @@
   padding: 2rem;
 }
 
+header {
+   border-bottom: 4px solid #039be5;
+   padding: 1rem;
+}
+
 h1 {
   text-align: center;
-  margin: 3rem;
-  border-bottom: 4px solid #039be5;
+  margin: 2rem 0 1rem 0; 
 }
 
 section {
@@ -64,7 +68,30 @@ a {
   text-decoration: none;
 }
 
-p:last-of-type {
+#root p:nth-last-of-type(1) {
   text-align: center;
+  font-weight: 400;   
+}
+
+div {
+  padding: 0 2rem 0 2rem;
+}
+
+#input__field {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 7px;
+  border: none;
+  margin-right: 1rem;
+}
+
+#input__field::after {
+  border: none;
+}
+
+#label{
+  font-size: 1.3rem;
   font-weight: 400;
 }
+
+

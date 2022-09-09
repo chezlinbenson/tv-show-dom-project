@@ -4,12 +4,36 @@ function setup() {
   makePageForEpisodes(allEpisodes);
 }
 
+function searchEpisode(allEpisodes) {
+  allEpisodes.forEach(episode => {
+    if(searchInput.value.includes(titleEl) || searchInput.value.includes(paraEl)) {
+      return rootElem.appendChild(episode);
+    }
+  })
+}
+
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
 
+  let headerEl = document.createElement("header");
+  rootElem.appendChild(headerEl);
+
   let pageTitle = document.createElement("h1");
   pageTitle.innerText = "TV Show Project";
-  rootElem.appendChild(pageTitle);
+  headerEl.appendChild(pageTitle);
+
+  let searchBar = document.createElement("div");
+  let searchInput = document.createElement("input");
+  searchInput.setAttribute("id", "input__field");
+  searchInput.type = "text";
+  searchInput.placeholder.innerHTML = "search";
+  let searchLabel = document.createElement("label");
+  searchLabel.setAttribute("id", "label");
+  searchLabel.innerText = "Displaying 10/73 episodes";
+
+  searchBar.appendChild(searchInput);
+  searchBar.appendChild(searchLabel);
+  headerEl.appendChild(searchBar);
 
   let sectionEl = document.createElement("section");
   rootElem.appendChild(sectionEl);
@@ -43,14 +67,11 @@ function makePageForEpisodes(episodeList) {
 
 window.onload = setup;
 
-// All episodes must be shown
-// For each episode, AT LEAST following must be displayed:
-// the episode's name
-// the season number
-// the episode number
-// the episode's medium-sized image
-// the episode's summary text
-// You should combine season number and episode number into an episode code:
-// Each part should be zero-padded to two digits.
-// Example: S02E07 would be the code for the 7th episode of the 2nd season. S2E7 would be incorrect.
-// Your page should state somewhere that the data has (originally) come from TVMaze.com, and link back to that site (or the specific episode on that site). See tvmaze.com/api#licensing.
+// Complete all requirements from Level 100
+// Add a "live" search input:
+// Only episodes whose summary OR name contains the search term should be displayed
+// The search should be case-insensitive
+// The display should update immediately after each keystroke changes the input.
+// Display how many episodes match the current search
+// If the search box is cleared, all episodes should be shown.
+// If you have been fetching the episode data from the API, be careful not to cause many frequent requests with this search feature. The search should look through an in-memory copy of the episode list. Do not fetch the data again each time something is typed!
