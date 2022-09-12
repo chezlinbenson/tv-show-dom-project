@@ -4,24 +4,19 @@ function setup() {
   makePageForEpisodes(allEpisodes);
 }
 
-function searchEpisode(allEpisodes) {
-  allEpisodes.forEach(episode => {
-    if(searchInput.value.includes(titleEl) || searchInput.value.includes(paraEl)) {
-      return rootElem.appendChild(episode);
-    }
-  })
-}
+const rootElem = document.getElementById("root");
 
 function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root");
-
+  // Create section below for header.
   let headerEl = document.createElement("header");
   rootElem.appendChild(headerEl);
 
+  // Create page title below
   let pageTitle = document.createElement("h1");
   pageTitle.innerText = "TV Show Project";
   headerEl.appendChild(pageTitle);
 
+  // Create search bar below.
   let searchBar = document.createElement("div");
   let searchInput = document.createElement("input");
   searchInput.setAttribute("id", "input__field");
@@ -35,9 +30,20 @@ function makePageForEpisodes(episodeList) {
   searchBar.appendChild(searchLabel);
   headerEl.appendChild(searchBar);
 
+  searchInput.addEventListener("input", function () {
+    makePageForEpisodes(
+      episodeList.filter((episode) => {
+        let input = searchInput.value;
+        return episode.name.includes(input) || episode.summary.includes(input);
+      })
+    );
+  });
+
+  // Create section to hold episode articles
   let sectionEl = document.createElement("section");
   rootElem.appendChild(sectionEl);
 
+  //Display Episodes
   episodeList.forEach((episode) => {
     let articleEl = document.createElement("article");
     sectionEl.appendChild(articleEl);
@@ -59,6 +65,7 @@ function makePageForEpisodes(episodeList) {
     articleEl.appendChild(paraEl);
   });
 
+  // Create website reference link.
   let sourceEl = document.createElement("p");
   sourceEl.innerHTML =
     'The data for this website originally comes from <a href="https://www.tvmaze.com/">TVMaze.com<a>';
