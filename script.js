@@ -1,21 +1,28 @@
 //You can edit ALL of the code here
 function setup() {
   const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
-}
+  const rootElem = document.getElementById("root");
 
-const rootElem = document.getElementById("root");
-
-function makePageForEpisodes(episodeList) {
-  // Create section below for header.
+  // Create section below for header
   let headerEl = document.createElement("header");
   rootElem.appendChild(headerEl);
+  let sectionEl = document.createElement("section");
+  rootElem.appendChild(sectionEl);
+  setupHeader(headerEl);
+  setupSearchInput(headerEl, allEpisodes, sectionEl);
+  makePageForEpisodes(allEpisodes, sectionEl);
 
+  setupPageCredits(rootElem);
+}
+
+function setupHeader(headerEl) {
   // Create page title below
   let pageTitle = document.createElement("h1");
   pageTitle.innerText = "TV Show Project";
   headerEl.appendChild(pageTitle);
+}
 
+function setupSearchInput(headerEl, episodeList, sectionEl) {
   // Create search bar below.
   let searchBar = document.createElement("div");
   let searchInput = document.createElement("input");
@@ -24,7 +31,8 @@ function makePageForEpisodes(episodeList) {
   searchInput.placeholder.innerHTML = "search";
   let searchLabel = document.createElement("label");
   searchLabel.setAttribute("id", "label");
-  searchLabel.innerText = "Displaying 10/73 episodes";
+  let epCount = episodeList.length;
+  searchLabel.innerHTML = `Displaying <span id="epCount">${epCount}</span>/73 episodes`;
 
   searchBar.appendChild(searchInput);
   searchBar.appendChild(searchLabel);
@@ -34,14 +42,29 @@ function makePageForEpisodes(episodeList) {
     makePageForEpisodes(
       episodeList.filter((episode) => {
         let input = searchInput.value;
-        return episode.name.includes(input) || episode.summary.includes(input);
-      })
+        return (
+          episode.name.toUpperCase().includes(input.toUpperCase()) ||
+          episode.summary.toUpperCase().includes(input.toUpperCase())
+        );
+      }),
+      sectionEl
     );
   });
+}
 
-  // Create section to hold episode articles
-  let sectionEl = document.createElement("section");
-  rootElem.appendChild(sectionEl);
+function makePageForEpisodes(episodeList, sectionEl) {
+  // Clear screen
+  while (sectionEl.firstChild) {
+    sectionEl.removeChild(sectionEl.firstChild);
+  }
+
+  //change searchLabel to correct amount
+  let countEp = document.getElementById("epCount");
+  countEp.textContent = episodeList.length;
+
+  if (!episodeList.length) {
+    sectionEl.innerText = "No Videos to Show";
+  }
 
   //Display Episodes
   episodeList.forEach((episode) => {
@@ -64,7 +87,9 @@ function makePageForEpisodes(episodeList) {
     paraEl.innerHTML = episode.summary;
     articleEl.appendChild(paraEl);
   });
+}
 
+function setupPageCredits(rootElem) {
   // Create website reference link.
   let sourceEl = document.createElement("p");
   sourceEl.innerHTML =
