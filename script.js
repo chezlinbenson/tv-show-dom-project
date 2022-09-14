@@ -10,7 +10,7 @@ function setup() {
   rootElem.appendChild(sectionEl);
   setupHeader(headerEl);
   setupSearchInput(headerEl, allEpisodes, sectionEl);
-  setupSelectEpisodes(allEpisodes);
+  setupSelectEpisodes(allEpisodes, sectionEl);
   makePageForEpisodes(allEpisodes, sectionEl);
 
   setupPageCredits(rootElem);
