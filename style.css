@@ -12,6 +12,8 @@
 }
 
 header {
+  display: grid;
+
   border-bottom: 4px solid #039be5;
   padding: 1rem;
 }
@@ -80,11 +82,12 @@ div {
 }
 
 #input__field {
+  position: relative;
   width: 10rem;
   height: 2rem;
   border-radius: 7px;
   border: none;
-  margin-right: 1rem;
+  /* margin-right: 1rem; */
 }
 
 #input__field::after {
@@ -92,6 +95,27 @@ div {
 }
 
 #label {
+  position: absolute;
+  left: 15rem;
   font-size: 1.3rem;
   font-weight: 400;
+}
+
+#select__episodes {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 7px;
+  border: none;
+  margin-right: 1rem;
+}
+
+#search__bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+#select__episodes{
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #455a64;
 }

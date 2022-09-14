@@ -10,6 +10,7 @@ function setup() {
   rootElem.appendChild(sectionEl);
   setupHeader(headerEl);
   setupSearchInput(headerEl, allEpisodes, sectionEl);
+  setupSelectEpisodes(allEpisodes);
   makePageForEpisodes(allEpisodes, sectionEl);
 
   setupPageCredits(rootElem);
@@ -25,6 +26,7 @@ function setupHeader(headerEl) {
 function setupSearchInput(headerEl, episodeList, sectionEl) {
   // Create search bar below.
   let searchBar = document.createElement("div");
+  searchBar.setAttribute("id", "search__bar");
   let searchInput = document.createElement("input");
   searchInput.setAttribute("id", "input__field");
   searchInput.type = "text";
@@ -52,6 +54,27 @@ function setupSearchInput(headerEl, episodeList, sectionEl) {
   });
 }
 
+function setupSelectEpisodes(allEpisodes, sectionEl) {
+  let selectEl = document.createElement("select");
+  selectEl.setAttribute("id", "select__episodes");
+  let searchBar = document.getElementById("search__bar");
+  searchBar.appendChild(selectEl);
+
+  let selectOption = document.createElement("option");
+  selectOption.text = "Select for all episodes.";
+  selectEl.add(selectOption);
+
+  selectEl.addEventListener("change", function () {
+    if (this.value === "Select for all episodes.") {
+      makePageForEpisodes(allEpisodes, sectionEl);
+    } else {
+      let singleArr = [];
+      singleArr.push(allEpisodes[this.value]);
+      makePageForEpisodes(singleArr, sectionEl);
+    }
+  });
+}
+
 function makePageForEpisodes(episodeList, sectionEl) {
   // Clear screen
   while (sectionEl.firstChild) {
@@ -67,7 +90,7 @@ function makePageForEpisodes(episodeList, sectionEl) {
   }
 
   //Display Episodes
-  episodeList.forEach((episode) => {
+  episodeList.forEach((episode, inx) => {
     let articleEl = document.createElement("article");
     sectionEl.appendChild(articleEl);
 
@@ -86,6 +109,12 @@ function makePageForEpisodes(episodeList, sectionEl) {
     let paraEl = document.createElement("p");
     paraEl.innerHTML = episode.summary;
     articleEl.appendChild(paraEl);
+
+    let selectOption = document.createElement("option");
+    selectOption.text = `${episode.name} - ${seasonCode}`;
+    selectOption.value = inx;
+    let selectEl = document.getElementById("select__episodes");
+    selectEl.add(selectOption);
   });
 }
 
