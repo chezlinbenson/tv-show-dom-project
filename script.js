@@ -1,19 +1,36 @@
 //You can edit ALL of the code here
 function setup() {
-  const allEpisodes = getAllEpisodes();
-  const rootElem = document.getElementById("root");
+  fetch("https://api.tvmaze.com/shows/5/episodes")
+    .then((response) => {
+      if (response.status >= 200 && response.status <= 299) {
+        return response.json();
+      } else {
+        throw new Error(
+          `Encountered something unexpected: ${response.status} ${response.statusText}`
+        );
+      }
+    })
+    .then((jsonResponse) => {
+      // do whatever you want with the JSON response
+      const allEpisodes = jsonResponse;
+      const rootElem = document.getElementById("root");
 
-  // Create section below for header
-  let headerEl = document.createElement("header");
-  rootElem.appendChild(headerEl);
-  let sectionEl = document.createElement("section");
-  rootElem.appendChild(sectionEl);
-  setupHeader(headerEl);
-  setupSearchInput(headerEl, allEpisodes, sectionEl);
-  setupSelectEpisodes(allEpisodes, sectionEl);
-  makePageForEpisodes(allEpisodes, sectionEl);
+      // Create section below for header
+      let headerEl = document.createElement("header");
+      rootElem.appendChild(headerEl);
+      let sectionEl = document.createElement("section");
+      rootElem.appendChild(sectionEl);
+      setupHeader(headerEl);
+      setupSearchInput(headerEl, allEpisodes, sectionEl);
+      setupSelectEpisodes(allEpisodes, sectionEl);
+      makePageForEpisodes(allEpisodes, sectionEl);
 
-  setupPageCredits(rootElem);
+      setupPageCredits(rootElem);
+    })
+    .catch((error) => {
+      // Handle the error
+      console.log(error);
+    });
 }
 
 function setupHeader(headerEl) {
@@ -34,7 +51,7 @@ function setupSearchInput(headerEl, episodeList, sectionEl) {
   let searchLabel = document.createElement("label");
   searchLabel.setAttribute("id", "label");
   let epCount = episodeList.length;
-  searchLabel.innerHTML = `Displaying <span id="epCount">${epCount}</span>/73 episodes`;
+  searchLabel.innerHTML = `Displaying <span id="epCount">${epCount}</span>/ ${episodeList.length} episodes`;
 
   searchBar.appendChild(searchInput);
   searchBar.appendChild(searchLabel);
@@ -127,12 +144,3 @@ function setupPageCredits(rootElem) {
 }
 
 window.onload = setup;
-
-// Complete all requirements from Level 100
-// Add a "live" search input:
-// Only episodes whose summary OR name contains the search term should be displayed
-// The search should be case-insensitive
-// The display should update immediately after each keystroke changes the input.
-// Display how many episodes match the current search
-// If the search box is cleared, all episodes should be shown.
-// If you have been fetching the episode data from the API, be careful not to cause many frequent requests with this search feature. The search should look through an in-memory copy of the episode list. Do not fetch the data again each time something is typed!
