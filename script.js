@@ -1,6 +1,12 @@
 //You can edit ALL of the code here
+let progStatus = "first";
+
 function setup() {
-  fetch("https://api.tvmaze.com/shows/5/episodes")
+  getDataAPI("https://api.tvmaze.com/shows/5/episodes");
+}
+
+function getDataAPI(myAPI) {
+  fetch(myAPI)
     .then((response) => {
       if (response.status >= 200 && response.status <= 299) {
         return response.json();
@@ -13,19 +19,25 @@ function setup() {
     .then((jsonResponse) => {
       // do whatever you want with the JSON response
       const allEpisodes = jsonResponse;
+      //create elements only the first time
+     if (progStatus === "first") {
       const rootElem = document.getElementById("root");
-
-      // Create section below for header
+      let allShows = getAllShows(); // Create section below for header
       let headerEl = document.createElement("header");
       rootElem.appendChild(headerEl);
       let sectionEl = document.createElement("section");
+      sectionEl.setAttribute("id", "sectionEl")
       rootElem.appendChild(sectionEl);
       setupHeader(headerEl);
       setupSearchInput(headerEl, allEpisodes, sectionEl);
       setupSelectEpisodes(allEpisodes, sectionEl);
-      makePageForEpisodes(allEpisodes, sectionEl);
-
+      setupSelectShow(allShows, allEpisodes, sectionEl);
+      makePageForEpisodes(allEpisodes);
       setupPageCredits(rootElem);
+      progStatus = "other"
+    } else {
+    makePageForEpisodes(allEpisodes);
+    }
     })
     .catch((error) => {
       // Handle the error
@@ -38,6 +50,55 @@ function setupHeader(headerEl) {
   let pageTitle = document.createElement("h1");
   pageTitle.innerText = "TV Show Project";
   headerEl.appendChild(pageTitle);
+}
+
+function setupSelectEpisodes(allEpisodes, sectionEl) {
+  let selectEl = document.createElement("select");
+  selectEl.setAttribute("id", "select__episodes");
+  let searchBar = document.getElementById("search__bar");
+  searchBar.appendChild(selectEl);
+
+  let selectOption = document.createElement("option");
+  selectOption.text = "Select for all episodes.";
+  selectEl.add(selectOption);
+
+  selectEl.addEventListener("change", function () {
+    if (this.value === "Select for all episodes.") {
+      makePageForEpisodes(allEpisodes);
+    } else {
+      let singleArr = [];
+      singleArr.push(allEpisodes[this.value]);
+      makePageForEpisodes(singleArr);
+    }
+  });
+}
+
+function setupSelectShow(allShows, allEpisodes, sectionEl) {
+  let selectShowEl = document.createElement("select");
+  selectShowEl.setAttribute("id", "select__show");
+  let searchBar = document.getElementById("search__bar");
+  searchBar.appendChild(selectShowEl);
+
+  let selectOptShow = document.createElement("option");
+  selectOptShow.text = "Select for all shows.";
+  selectShowEl.add(selectOptShow);
+  allShows.forEach((el, inx) => {
+    let selectOptShow = document.createElement("option");
+    selectOptShow.text = allShows[inx].name;
+    selectOptShow.value = inx;
+    selectShowEl.add(selectOptShow);
+  });
+
+  selectShowEl.addEventListener("change", function () {
+    if (this.value === "Select for all shows.") {
+      makePageForEpisodes(allEpisodes);
+    } else {
+      let SHOW_ID = allShows[this.value].id;
+      let showUrl = `https://api.tvmaze.com/shows/${SHOW_ID}/episodes`;
+      getDataAPI(showUrl);
+     
+    }
+  });
 }
 
 function setupSearchInput(headerEl, episodeList, sectionEl) {
@@ -65,35 +126,14 @@ function setupSearchInput(headerEl, episodeList, sectionEl) {
           episode.name.toUpperCase().includes(input.toUpperCase()) ||
           episode.summary.toUpperCase().includes(input.toUpperCase())
         );
-      }),
-      sectionEl
+      })
     );
   });
 }
 
-function setupSelectEpisodes(allEpisodes, sectionEl) {
-  let selectEl = document.createElement("select");
-  selectEl.setAttribute("id", "select__episodes");
-  let searchBar = document.getElementById("search__bar");
-  searchBar.appendChild(selectEl);
-
-  let selectOption = document.createElement("option");
-  selectOption.text = "Select for all episodes.";
-  selectEl.add(selectOption);
-
-  selectEl.addEventListener("change", function () {
-    if (this.value === "Select for all episodes.") {
-      makePageForEpisodes(allEpisodes, sectionEl);
-    } else {
-      let singleArr = [];
-      singleArr.push(allEpisodes[this.value]);
-      makePageForEpisodes(singleArr, sectionEl);
-    }
-  });
-}
-
-function makePageForEpisodes(episodeList, sectionEl) {
+function makePageForEpisodes(episodeList) {
   // Clear screen
+  let sectionEl = document.getElementById("sectionEl");
   while (sectionEl.firstChild) {
     sectionEl.removeChild(sectionEl.firstChild);
   }
