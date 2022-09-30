@@ -23,7 +23,20 @@ function getDataAPI(myAPI) {
       //create elements only the first time
       if (progStatus === "first") {
         const rootElem = document.getElementById("root");
-        let allShows = getAllShows(); // Create section below for header
+        let allShows = getAllShows().sort((a, b) => {
+          const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+          const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        });
+        // Create section below for header
         let headerEl = document.createElement("header");
         rootElem.appendChild(headerEl);
         let sectionEl = document.createElement("section");
@@ -176,13 +189,24 @@ function makePageForEpisodes(episodeList) {
     titleEl.innerText = `${episode.name} - ${seasonCode}`;
     articleEl.appendChild(titleEl);
 
-    let imageEl = document.createElement("img");
-    imageEl.src = episode.image.medium;
-    imageEl.alt = `Picture of Game of Thrones - ${seasonCode}`;
-    articleEl.appendChild(imageEl);
+    if (episode.image === null || !episode.image.medium) {
+      imageError = document.createElement("p");
+      imageError.textContent = "No Image Available";
+      articleEl.appendChild(imageError);
+    } else {
+      let imageEl = document.createElement("img");
+      imageEl.src = episode.image.medium;
+      imageEl.alt = `Picture of episode - ${seasonCode}`;
+      articleEl.appendChild(imageEl);
+    }
 
     let paraEl = document.createElement("p");
-    paraEl.innerHTML = episode.summary;
+    if (!episode.summary) {
+      paraEl.innerHTML = "Episode Summary Not Available";
+    } else {
+      paraEl.innerHTML = episode.summary;
+    }
+
     articleEl.appendChild(paraEl);
 
     let selectOption = document.createElement("option");
