@@ -1,6 +1,6 @@
 //You can edit ALL of the code here
 let progStatus = "first";
-
+let allEpisodes;
 function setup() {
   getDataAPI("https://api.tvmaze.com/shows/5/episodes");
 }
@@ -9,6 +9,7 @@ function getDataAPI(myAPI) {
   fetch(myAPI)
     .then((response) => {
       if (response.status >= 200 && response.status <= 299) {
+        console.log(response);
         return response.json();
       } else {
         throw new Error(
@@ -18,26 +19,31 @@ function getDataAPI(myAPI) {
     })
     .then((jsonResponse) => {
       // do whatever you want with the JSON response
-      const allEpisodes = jsonResponse;
+      allEpisodes = jsonResponse;
       //create elements only the first time
-     if (progStatus === "first") {
-      const rootElem = document.getElementById("root");
-      let allShows = getAllShows(); // Create section below for header
-      let headerEl = document.createElement("header");
-      rootElem.appendChild(headerEl);
-      let sectionEl = document.createElement("section");
-      sectionEl.setAttribute("id", "sectionEl")
-      rootElem.appendChild(sectionEl);
-      setupHeader(headerEl);
-      setupSearchInput(headerEl, allEpisodes, sectionEl);
-      setupSelectEpisodes(allEpisodes, sectionEl);
-      setupSelectShow(allShows, allEpisodes, sectionEl);
-      makePageForEpisodes(allEpisodes);
-      setupPageCredits(rootElem);
-      progStatus = "other"
-    } else {
-    makePageForEpisodes(allEpisodes);
-    }
+      if (progStatus === "first") {
+        const rootElem = document.getElementById("root");
+        let allShows = getAllShows(); // Create section below for header
+        let headerEl = document.createElement("header");
+        rootElem.appendChild(headerEl);
+        let sectionEl = document.createElement("section");
+        sectionEl.setAttribute("id", "sectionEl");
+        rootElem.appendChild(sectionEl);
+        setupHeader(headerEl);
+        let searchBar = document.createElement("div");
+        searchBar.setAttribute("id", "search__bar");
+        headerEl.appendChild(searchBar);
+        setupSelectShow(allShows, allEpisodes, sectionEl);
+        setupSelectEpisodes(sectionEl);
+        setupSearchInput(headerEl, allEpisodes, sectionEl);
+        makePageForEpisodes(allEpisodes);
+        setupPageCredits(rootElem);
+        progStatus = "other";
+      } else {
+        let showsCount = document.getElementById("showsCount");
+        showsCount.textContent = allEpisodes.length;
+        makePageForEpisodes(allEpisodes);
+      }
     })
     .catch((error) => {
       // Handle the error
@@ -50,27 +56,6 @@ function setupHeader(headerEl) {
   let pageTitle = document.createElement("h1");
   pageTitle.innerText = "TV Show Project";
   headerEl.appendChild(pageTitle);
-}
-
-function setupSelectEpisodes(allEpisodes, sectionEl) {
-  let selectEl = document.createElement("select");
-  selectEl.setAttribute("id", "select__episodes");
-  let searchBar = document.getElementById("search__bar");
-  searchBar.appendChild(selectEl);
-
-  let selectOption = document.createElement("option");
-  selectOption.text = "Select for all episodes.";
-  selectEl.add(selectOption);
-
-  selectEl.addEventListener("change", function () {
-    if (this.value === "Select for all episodes.") {
-      makePageForEpisodes(allEpisodes);
-    } else {
-      let singleArr = [];
-      singleArr.push(allEpisodes[this.value]);
-      makePageForEpisodes(singleArr);
-    }
-  });
 }
 
 function setupSelectShow(allShows, allEpisodes, sectionEl) {
@@ -95,16 +80,37 @@ function setupSelectShow(allShows, allEpisodes, sectionEl) {
     } else {
       let SHOW_ID = allShows[this.value].id;
       let showUrl = `https://api.tvmaze.com/shows/${SHOW_ID}/episodes`;
+      let selectEl = document.getElementById("select__episodes");
+      selectEl.options.length = 0;
       getDataAPI(showUrl);
-     
+    }
+  });
+}
+
+function setupSelectEpisodes(sectionEl) {
+  let selectEl = document.createElement("select");
+  selectEl.setAttribute("id", "select__episodes");
+  let searchBar = document.getElementById("search__bar");
+  searchBar.appendChild(selectEl);
+
+  selectEl.addEventListener("change", function () {
+    if (this.value === "Select for all episodes.") {
+      selectEl.options.length = 0;
+      console.log("I selected all", allEpisodes);
+      makePageForEpisodes(allEpisodes);
+    } else {
+      let singleArr = [];
+      console.log("I selected One");
+      singleArr.push(allEpisodes[this.value]);
+      console.log(singleArr); //[this.value]);
+      makePageForEpisodes(singleArr);
     }
   });
 }
 
 function setupSearchInput(headerEl, episodeList, sectionEl) {
   // Create search bar below.
-  let searchBar = document.createElement("div");
-  searchBar.setAttribute("id", "search__bar");
+
   let searchInput = document.createElement("input");
   searchInput.setAttribute("id", "input__field");
   searchInput.type = "text";
@@ -112,15 +118,15 @@ function setupSearchInput(headerEl, episodeList, sectionEl) {
   let searchLabel = document.createElement("label");
   searchLabel.setAttribute("id", "label");
   let epCount = episodeList.length;
-  searchLabel.innerHTML = `Displaying <span id="epCount">${epCount}</span>/ ${episodeList.length} episodes`;
-
+  let showsCount = episodeList.length;
+  searchLabel.innerHTML = `Displaying <span id="epCount">${epCount}</span> / <span id="showsCount"> ${showsCount}</span> episodes`;
+  let searchBar = document.getElementById("search__bar");
   searchBar.appendChild(searchInput);
   searchBar.appendChild(searchLabel);
-  headerEl.appendChild(searchBar);
 
   searchInput.addEventListener("input", function () {
     makePageForEpisodes(
-      episodeList.filter((episode) => {
+      allEpisodes.filter((episode) => {
         let input = searchInput.value;
         return (
           episode.name.toUpperCase().includes(input.toUpperCase()) ||
@@ -138,13 +144,25 @@ function makePageForEpisodes(episodeList) {
     sectionEl.removeChild(sectionEl.firstChild);
   }
 
+  let showsCount = document.getElementById("showsCount");
+  // showsCount.textContent =
+  // console.log("Look here!!", allShows[this.value]);
+
   //change searchLabel to correct amount
+  let selectEl = document.getElementById("select__episodes");
+  //add my 2 options and event listener
+  let selectOption = document.createElement("option");
+  selectOption.text = "Select for all episodes.";
+  selectEl.add(selectOption);
+
   let countEp = document.getElementById("epCount");
   countEp.textContent = episodeList.length;
 
   if (!episodeList.length) {
     sectionEl.innerText = "No Videos to Show";
   }
+
+  console.log("Episode List", episodeList);
 
   //Display Episodes
   episodeList.forEach((episode, inx) => {
