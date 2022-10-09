@@ -109,11 +109,9 @@ function setupSelectEpisodes(sectionEl) {
   selectEl.addEventListener("change", function () {
     if (this.value === "Select for all episodes.") {
       selectEl.options.length = 0;
-      console.log("I selected all", allEpisodes);
       makePageForEpisodes(allEpisodes);
     } else {
       let singleArr = [];
-      console.log("I selected One");
       singleArr.push(allEpisodes[this.value]);
       console.log(singleArr); //[this.value]);
       makePageForEpisodes(singleArr);
@@ -127,7 +125,7 @@ function setupSearchInput(headerEl, episodeList, sectionEl) {
   let searchInput = document.createElement("input");
   searchInput.setAttribute("id", "input__field");
   searchInput.type = "text";
-  searchInput.placeholder.innerHTML = "search";
+  searchInput.placeholder = "Search";
   let searchLabel = document.createElement("label");
   searchLabel.setAttribute("id", "label");
   let epCount = episodeList.length;

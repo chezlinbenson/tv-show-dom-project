@@ -87,6 +87,9 @@ div {
   height: 2rem;
   border-radius: 7px;
   border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #455a64;
 }
 
 #input__field::after {
@@ -103,6 +106,9 @@ div {
   height: 2rem;
   border-radius: 7px;
   border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #455a64;
 }
 
 #select__show {
@@ -118,8 +124,4 @@ div {
   gap: 30px;
 }
 
-#select__episodes {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #455a64;
-}
+
